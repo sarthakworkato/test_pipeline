@@ -30,4 +30,4 @@ jobs:
       - name: Deploy to Dev
         run: |
           forge deploy
-          forge install --upgrade --site sarthakhanda.atlassian.com --product jira
+          forge install --upgrade --site sarthakhanda.atlassian.net --product jira
