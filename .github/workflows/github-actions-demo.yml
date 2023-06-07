@@ -1,18 +1,40 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
-jobs:
-  Explore-GitHub-Actions:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v3
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+image:
+  name: node:18
+
+pipelines:
+  default:
+    - step:
+        name: Check Code linting
+        script:
+          - npm install
+          - npm install --global @forge/cli
+          - forge settings set usage-analytics true
+          - forge lint
+        caches:
+          - node
+              
+    - step:
+        name: Deploy to Staging
+        deployment: staging
+        caches:
+          - node
+        script:
+          - npm install
+          - npm install --global @forge/cli
+          - forge settings set usage-analytics true
+          - forge deploy -e staging
+          - forge install --upgrade --site MYSITE.atlassian.com --product confluence --non-interactive -e staging
+          # remove this forge install step if you prefer to deploy 
+          # major app changes through your site's Universal Plugin Manager.
+
+    - step:
+        name: Deploy to Production
+        trigger: manual
+        deployment: production
+        caches:
+          - node
+        script:
+          - npm install
+          - npm install --global @forge/cli
+          - forge settings set usage-analytics true
+          - forge deploy -e production
