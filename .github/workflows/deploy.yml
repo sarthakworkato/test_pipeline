@@ -22,7 +22,7 @@ jobs:
         run: npm install -g @forge/cli
 
       - name: Authenticate with Jira
-        run: forge login --email sarthak.handa@workato.com --token ATATT3xFfGF0-wrE4mLV9pM1nNM6TZytDtSzhhZC0862cYAAGhzZAQPE0_A-ex7Nn4mNUlq9N25Qg9yfNpV8uuPkrOIT9mShPNt5yKpx--Qs4RL4TtEkBzCY0L0xxRCw48laoeERK6Gg10WwuoQ3BmzBmuF66keIwQgPo-5zuJXPBSQdFzrUFas=29D25AE6
+        run: forge login --email sarthak.handa@workato.com --token ${{ secrets.JIRA_API_TOKEN }}
 
       - name: Install Dependencies
         run: npm install
