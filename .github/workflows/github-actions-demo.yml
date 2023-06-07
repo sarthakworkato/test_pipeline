@@ -1,40 +1,89 @@
-image:
-  name: node:18
+name: Node.js CI
 
-pipelines:
-  default:
-    - step:
-        name: Check Code linting
-        script:
-          - npm install
-          - npm install --global @forge/cli
-          - forge settings set usage-analytics true
-          - forge lint
-        caches:
-          - node
-              
-    - step:
-        name: Deploy to Staging
-        deployment: staging
-        caches:
-          - node
-        script:
-          - npm install
-          - npm install --global @forge/cli
-          - forge settings set usage-analytics true
-          - forge deploy -e staging
-          - forge install --upgrade --site MYSITE.atlassian.com --product confluence --non-interactive -e staging
-          # remove this forge install step if you prefer to deploy 
-          # major app changes through your site's Universal Plugin Manager.
+on:
+  push:
+    branches:
+      - main
 
-    - step:
-        name: Deploy to Production
-        trigger: manual
-        deployment: production
-        caches:
-          - node
-        script:
-          - npm install
-          - npm install --global @forge/cli
-          - forge settings set usage-analytics true
-          - forge deploy -e production
+jobs:
+  lint:
+    name: Check Code linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install @forge/cli
+        run: npm install --global @forge/cli
+
+      - name: Set Forge usage-analytics
+        run: forge settings set usage-analytics true
+
+      - name: Run linting
+        run: forge lint
+
+  staging:
+    name: Deploy to Staging
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install @forge/cli
+        run: npm install --global @forge/cli
+
+      - name: Set Forge usage-analytics
+        run: forge settings set usage-analytics true
+
+      - name: Deploy to Staging
+        run: |
+          forge deploy -e staging
+          forge install --upgrade --site MYSITE.atlassian.com --product confluence --non-interactive -e staging
+
+  production:
+    name: Deploy to Production
+    needs: staging
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install @forge/cli
+        run: npm install --global @forge/cli
+
+      - name: Set Forge usage-analytics
+        run: forge settings set usage-analytics true
+
+      - name: Manual approval
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'Deploy to Production'
+      
+      - name: Deploy to Production
+        run: forge deploy -e production
