@@ -2,7 +2,7 @@ modules:
   jira:issuePanel:
     - key: test-app-hello-world-panel
       function: main
-      title: test_app
+      title: Take Action
       icon: https://developer.atlassian.com/platform/forge/images/icons/issue-panel-icon.svg
   function:
     - key: main
