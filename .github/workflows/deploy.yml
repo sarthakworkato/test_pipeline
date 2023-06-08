@@ -21,11 +21,5 @@ jobs:
       - name: Install Forge CLI
         run: npm install -g @forge/cli
 
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build and Package
-        run: npm run build && forge package
-
       - name: Deploy to Jira
         run: forge deploy
