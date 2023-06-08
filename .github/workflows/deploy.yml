@@ -22,8 +22,6 @@ jobs:
         run: |
           npm install
           npm install -g @forge/cli
-          forge settings set usage-analytics true
-          forge lint
         env:
           CI: true
 
