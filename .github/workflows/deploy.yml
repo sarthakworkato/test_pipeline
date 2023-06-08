@@ -26,4 +26,4 @@ jobs:
           CI: true
 
       - name: Deploy to Staging
-        run: forge deploy -e staging
+        run: forge deploy -e staging --no-ansi --yes
