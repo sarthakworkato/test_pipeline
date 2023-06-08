@@ -24,9 +24,5 @@ jobs:
       - name: Set Forge settings
         run: forge settings set usage-analytics true
 
-      - name: Code linting
-        run: |
-          npm install
-          forge lint
-        env:
-          CI: true
+      - name: Code deploy
+        run: forge deploy
