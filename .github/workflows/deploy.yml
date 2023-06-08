@@ -6,41 +6,23 @@ on:
       - main
 
 jobs:
-  deploy_staging:
+  deploy:
     runs-on: ubuntu-latest
-    pi
-    - step:
-        name: Check Code linting
-        script:
-          - npm install
-          - npm install --global @forge/cli
-          - forge settings set usage-analytics true
-          - forge lint
-        caches:
-          - node
-              
-    - step:
-        name: Deploy to Staging
-        deployment: staging
-        caches:
-          - node
-        script:
-          - npm install
-          - npm install --global @forge/cli
-          - forge settings set usage-analytics true
-          - forge deploy -e staging
-          - forge install --upgrade --site MYSITE.atlassian.com --product confluence --non-interactive -e staging
-          # remove this forge install step if you prefer to deploy 
-          # major app changes through your site's Universal Plugin Manager.
 
-    - step:
-        name: Deploy to Production
-        trigger: manual
-        deployment: production
-        caches:
-          - node
-        script:
-          - npm install
-          - npm install --global @forge/cli
-          - forge settings set usage-analytics true
-          - forge deploy -e production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install Forge CLI
+        run: npm install -g @forge/cli
+
+      - name: Set Forge settings
+        run: forge settings set usage-analytics true
+
+      - name: Code deploy
+        run: forge deploy
