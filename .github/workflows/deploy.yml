@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  deploy_staging:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,11 +18,14 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install Forge CLI
-        run: npm install -g @forge/cli
+      - name: Set up Forge CLI and lint code
+        run: |
+          npm install
+          npm install -g @forge/cli
+          forge settings set usage-analytics true
+          forge lint
+        env:
+          CI: true
 
-      - name: Set Forge settings
-        run: forge settings set usage-analytics true
-
-      - name: Code deploy
-        run: forge deploy --yes-interactive
+      - name: Deploy to Staging
+        run: forge deploy -e staging
