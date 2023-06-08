@@ -25,4 +25,4 @@ jobs:
         run: forge settings set usage-analytics true
 
       - name: Code deploy
-        run: forge deploy
+        run: forge deploy --yes-interactive
