@@ -21,5 +21,12 @@ jobs:
       - name: Install Forge CLI
         run: npm install -g @forge/cli
 
-      - name: Deploy to Jira
-        run: forge deploy
+      - name: Set Forge settings
+        run: forge settings set usage-analytics true
+
+      - name: Code linting
+        run: |
+          npm install
+          forge lint
+        env:
+          CI: true
